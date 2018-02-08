@@ -4,12 +4,6 @@ from dockerpty.pty import ExecOperation, PseudoTerminal
 
 from . import exceptions
 
-MODE_PREFIXES = {'python': 'source /venv/bin/activate && '}
-
-
-def get_mode(label):
-    return MODE_PREFIXES.get(label, '')
-
 
 @lru_cache(maxsize=1)
 def get_container(client):
@@ -21,15 +15,16 @@ def get_container(client):
     return containers[0]
 
 
-def execute(api, container, params):
+def execute(api, container, params, prefix):
     if not params:
         params = ['/bin/sh']
 
-    prefix = get_mode(container.labels.get('app.rind', ''))
+    if prefix:
+        params = [prefix, '&&'] + params
     cmd = [
         '/bin/sh',
         '-c',
-        prefix + " ".join(params),
+        " ".join(params),
     ]
     exec_id = api.exec_create(
         container=container.id, cmd=cmd, tty=True, stdin=True)
