@@ -26,9 +26,7 @@ To `rind` enable a container a  ``app.rind`` label needs to be added. Do do this
 
 Rind also has the ability to run pre-steps when executing inside the container. For example activating a Python virtualenv.
 
-In fact this is the *only* support pre-step currently. Ideas of others are welcome.
-
-To enable the virtualenv automatically prior to executing you need to add a value to your label.
+To enable a pre-step you need to add it as a value to your label.
 
 .. code-block:: yaml
 
@@ -36,10 +34,10 @@ To enable the virtualenv automatically prior to executing you need to add a valu
         a_service:
             image: an_image
             labels:
-                app.rind: "python"
+                app.rind: "source /venv/bin/activate"
 
 
-Currently this assumes you virtualenv is at ``/venv`` within your docker container.
+This assumes you virtualenv is at ``/venv`` within your docker container. It will be combined with the actual command passed in. e.g.: ``rind /bin/sh``  would be run in your container as ``source /venv/bin/activate && /bin/sh``
 
 
 Running
